@@ -17,9 +17,9 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 data class ActivatePayload(
-    var activationDate: String? = null,
+    val activationDate: String? = null,
 
-    var dateFormat: String? = "dd MMMM YYYY",
+    val dateFormat: String? = "dd MMMM YYYY",
 
-    var locale: String? = "en",
+    val locale: String? = "en",
 ) : Parcelable

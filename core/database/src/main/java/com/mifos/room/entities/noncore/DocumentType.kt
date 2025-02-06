@@ -17,15 +17,14 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 data class DocumentType(
-    var id: Int? = null,
+    val id: Int? = null,
+    val name: String? = null,
 
-    var name: String? = null,
+    val active: Boolean? = null,
 
-    var active: Boolean? = null,
+    val mandatory: Boolean? = null,
 
-    var mandatory: Boolean? = null,
+    val description: String? = null,
 
-    var description: String? = null,
-
-    var position: Int? = null,
+    val position: Int? = null,
 ) : Parcelable

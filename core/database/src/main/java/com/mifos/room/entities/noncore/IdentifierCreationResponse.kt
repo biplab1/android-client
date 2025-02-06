@@ -17,9 +17,9 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 data class IdentifierCreationResponse(
-    var clientId: Int = 0,
+    val clientId: Int = 0,
 
-    var officeId: Int = 0,
+    val officeId: Int = 0,
 
-    var resourceId: Int = 0,
+    val resourceId: Int = 0,
 ) : Parcelable
