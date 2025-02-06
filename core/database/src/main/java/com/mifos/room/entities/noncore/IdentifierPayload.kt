@@ -17,11 +17,11 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 data class IdentifierPayload(
-    var documentTypeId: Int? = null,
+    val documentTypeId: Int? = null,
 
-    var documentKey: String? = null,
+    val documentKey: String? = null,
 
-    var status: String? = null,
+    val status: String? = null,
 
-    var description: String? = null,
+    val description: String? = null,
 ) : Parcelable

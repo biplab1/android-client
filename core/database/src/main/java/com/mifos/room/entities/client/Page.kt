@@ -13,7 +13,7 @@ package com.mifos.room.entities.client
  * Created by ishankhanna on 09/02/14.
  */
 data class Page<T>(
-    var totalFilteredRecords: Int = 0,
+    val totalFilteredRecords: Int = 0,
 
-    var pageItems: List<T> = ArrayList(),
+    val pageItems: List<T> = ArrayList(),
 )
