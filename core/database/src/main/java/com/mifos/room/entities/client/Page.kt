@@ -7,16 +7,13 @@
  *
  * See https://github.com/openMF/android-client/blob/master/LICENSE.md
  */
-package com.mifos.core.data.repository
-
-import androidx.paging.PagingData
-import com.mifos.room.entities.client.Charges
-import kotlinx.coroutines.flow.Flow
+package com.mifos.room.entities.client
 
 /**
- * Created by Aditya Gupta on 08/08/23.
+ * Created by ishankhanna on 09/02/14.
  */
-interface ClientChargeRepository {
+data class Page<T>(
+    var totalFilteredRecords: Int = 0,
 
-    fun getClientCharges(clientId: Int): Flow<PagingData<Charges>>
-}
+    var pageItems: List<T> = ArrayList(),
+)

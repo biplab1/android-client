@@ -7,16 +7,19 @@
  *
  * See https://github.com/openMF/android-client/blob/master/LICENSE.md
  */
-package com.mifos.core.data.repository
+package com.mifos.room.entities.noncore
 
-import androidx.paging.PagingData
-import com.mifos.room.entities.client.Charges
-import kotlinx.coroutines.flow.Flow
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
 /**
- * Created by Aditya Gupta on 08/08/23.
+ * Created by Tarun on 07-08-17.
  */
-interface ClientChargeRepository {
+@Parcelize
+data class IdentifierCreationResponse(
+    var clientId: Int = 0,
 
-    fun getClientCharges(clientId: Int): Flow<PagingData<Charges>>
-}
+    var officeId: Int = 0,
+
+    var resourceId: Int = 0,
+) : Parcelable

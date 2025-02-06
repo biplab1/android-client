@@ -18,9 +18,9 @@ import com.mifos.core.entity.templates.clients.ClientsTemplate
 import com.mifos.core.network.datamanager.DataManagerClient
 import com.mifos.core.network.datamanager.DataManagerOffices
 import com.mifos.core.network.datamanager.DataManagerStaff
+import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
-import rx.Observable
 import javax.inject.Inject
 
 /**
@@ -32,7 +32,7 @@ class CreateNewClientRepositoryImp @Inject constructor(
     private val dataManagerStaff: DataManagerStaff,
 ) : CreateNewClientRepository {
 
-    override fun clientTemplate(): Observable<ClientsTemplate> {
+    override fun clientTemplate(): Flow<ClientsTemplate> {
         return dataManagerClient.clientTemplate
     }
 
@@ -44,11 +44,11 @@ class CreateNewClientRepositoryImp @Inject constructor(
         return dataManagerStaff.getStaffInOffice(officeId)
     }
 
-    override fun createClient(clientPayload: ClientPayload): Observable<Client> {
+    override fun createClient(clientPayload: ClientPayload): Flow<Client> {
         return dataManagerClient.createClient(clientPayload)
     }
 
-    override fun uploadClientImage(id: Int, file: MultipartBody.Part?): Observable<ResponseBody> {
+    override fun uploadClientImage(id: Int, file: MultipartBody.Part?): Flow<ResponseBody> {
         return dataManagerClient.uploadClientImage(id, file)
     }
 }
