@@ -9,7 +9,7 @@
  */
 package com.mifos.core.data.repository
 
-import com.mifos.core.objects.noncoreobjects.Identifier
+import com.mifos.room.entities.noncore.Identifier
 import org.openapitools.client.models.DeleteClientsClientIdIdentifiersIdentifierIdResponse
 
 /**

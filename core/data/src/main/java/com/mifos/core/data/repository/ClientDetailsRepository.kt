@@ -9,20 +9,20 @@
  */
 package com.mifos.core.data.repository
 
-import com.mifos.core.entity.client.Client
+import com.mifos.room.entities.client.Client
 import com.mifos.room.entities.accounts.ClientAccounts
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
-import rx.Observable
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by Aditya Gupta on 06/08/23.
  */
 interface ClientDetailsRepository {
 
-    fun uploadClientImage(id: Int, file: MultipartBody.Part?): Observable<ResponseBody>
+    fun uploadClientImage(id: Int, file: MultipartBody.Part?): Flow<ResponseBody>
 
-    fun deleteClientImage(clientId: Int): Observable<ResponseBody>
+    fun deleteClientImage(clientId: Int): Flow<ResponseBody>
 
     suspend fun getClientAccounts(clientId: Int): ClientAccounts
 

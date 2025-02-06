@@ -11,9 +11,9 @@ package com.mifos.core.data.pagingSource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.mifos.core.entity.client.Client
+import com.mifos.room.entities.client.Client
 import com.mifos.core.network.datamanager.DataManagerClient
-import com.mifos.core.objects.clients.Page
+import com.mifos.room.entities.client.Page
 import rx.Subscriber
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
