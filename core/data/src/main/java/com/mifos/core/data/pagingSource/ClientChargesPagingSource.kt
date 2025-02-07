@@ -11,8 +11,8 @@ package com.mifos.core.data.pagingSource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.mifos.room.entities.client.Charges
 import com.mifos.core.network.datamanager.DataManagerCharge
+import com.mifos.room.entities.client.Charges
 import com.mifos.room.entities.client.Page
 import kotlinx.coroutines.suspendCancellableCoroutine
 import rx.Subscriber
