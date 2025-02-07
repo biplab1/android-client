@@ -17,21 +17,21 @@ import com.mifos.core.entity.client.Status
  * Created by nellyk on 2/19/2016.
  */
 data class Savings(
-    var id: Int? = null,
+    val id: Int? = null,
 
-    var accountNo: String? = null,
+    val accountNo: String? = null,
 
-    var productId: Int? = null,
+    val productId: Int? = null,
 
-    var productName: String? = null,
+    val productName: String? = null,
 
-    var status: Status? = null,
+    val status: Status? = null,
 
-    var currency: Currency? = null,
+    val currency: Currency? = null,
 
-    var accountBalance: Double? = null,
+    val accountBalance: Double? = null,
 
-    var additionalProperties: Map<String, Any> = HashMap(),
+    val additionalProperties: Map<String, Any> = HashMap(),
 
-    var depositType: DepositType? = null,
+    val depositType: DepositType? = null,
 )

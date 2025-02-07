@@ -21,17 +21,17 @@ import kotlinx.parcelize.Parcelize
 )
 data class ClientDate(
     @ColumnInfo(name = "clientId")
-    var clientId: Long = 0,
+    val clientId: Long = 0,
 
     @ColumnInfo(name = "chargeId")
-    var chargeId: Long = 0,
+    val chargeId: Long = 0,
 
     @ColumnInfo(name = "day")
-    var day: Int = 0,
+    val day: Int = 0,
 
     @ColumnInfo(name = "month")
-    var month: Int = 0,
+    val month: Int = 0,
 
     @ColumnInfo(name = "year")
-    var year: Int = 0,
+    val year: Int = 0,
 ) : Parcelable
