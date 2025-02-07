@@ -21,7 +21,7 @@ import javax.inject.Inject
  */
 class ClientIdentifierDialogRepositoryImp @Inject constructor(
     private val dataManagerClient: DataManagerClient,
-    ) : ClientIdentifierDialogRepository {
+) : ClientIdentifierDialogRepository {
 
     override suspend fun getClientIdentifierTemplate(clientId: Int): IdentifierTemplate {
         return dataManagerClient.getClientIdentifierTemplate(clientId)

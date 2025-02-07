@@ -10,9 +10,9 @@
 package com.mifos.core.data.repositoryImp
 
 import com.mifos.core.data.repository.ClientDetailsRepository
-import com.mifos.room.entities.client.Client
 import com.mifos.core.network.datamanager.DataManagerClient
 import com.mifos.room.entities.accounts.ClientAccounts
+import com.mifos.room.entities.client.Client
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
@@ -23,7 +23,7 @@ import javax.inject.Inject
  */
 class ClientDetailsRepositoryImp @Inject constructor(
     private val dataManagerClient: DataManagerClient,
-    ) : ClientDetailsRepository {
+) : ClientDetailsRepository {
 
     override fun uploadClientImage(id: Int, file: MultipartBody.Part?): Flow<ResponseBody> {
         return dataManagerClient.uploadClientImage(id, file)

@@ -20,7 +20,7 @@ import javax.inject.Inject
  */
 class ClientIdentifiersRepositoryImp @Inject constructor(
     private val dataManagerClient: DataManagerClient,
-    ) : ClientIdentifiersRepository {
+) : ClientIdentifiersRepository {
 
     override suspend fun getClientIdentifiers(clientId: Int): List<Identifier> {
         return dataManagerClient.getClientIdentifiers(clientId)
