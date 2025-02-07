@@ -20,13 +20,13 @@ import kotlinx.parcelize.Parcelize
 data class Status(
     @PrimaryKey
     @ColumnInfo(name = "id")
-    var id: Int = 0,
+    val id: Int = 0,
 
     @ColumnInfo(name = "code")
-    var code: String? = null,
+    val code: String? = null,
 
     @ColumnInfo(name = "value")
-    var value: String? = null,
+    val value: String? = null,
 ) : Parcelable {
 
     companion object {
