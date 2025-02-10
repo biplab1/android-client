@@ -38,81 +38,56 @@ import kotlinx.parcelize.Parcelize
 )
 data class Client(
     @PrimaryKey
-    @ColumnInfo(name = "id")
     val id: Int = 0,
 
-    @ColumnInfo(name = "groupId")
     @Transient
     val groupId: Int? = 0,
 
-    @ColumnInfo(name = "accountNo")
     val accountNo: String? = null,
 
-    @ColumnInfo(name = "clientId")
     val clientId: Int? = null,
 
-    @ColumnInfo(name = "status")
     val status: Status? = null,
 
-    @ColumnInfo(name = "sync")
     @Transient
     val sync: Boolean = false,
 
-    @ColumnInfo(name = "active")
     val active: Boolean = false,
 
-    @ColumnInfo(name = "clientDate")
     val clientDate: ClientDate? = null,
 
-    @ColumnInfo(name = "activationDate")
     val activationDate: List<Int?> = emptyList(),
 
-    @ColumnInfo(name = "dobDate")
     val dobDate: List<Int?> = emptyList(),
 
-    @ColumnInfo(name = "groups")
     val groups: List<Group?> = emptyList(),
 
-    @ColumnInfo(name = "mobileNo")
     val mobileNo: String? = null,
 
-    @ColumnInfo(name = "firstname")
     val firstname: String? = null,
 
-    @ColumnInfo(name = "middlename")
     val middlename: String? = null,
 
-    @ColumnInfo(name = "lastname")
     val lastname: String? = null,
 
-    @ColumnInfo(name = "displayName")
     val displayName: String? = null,
 
-    @ColumnInfo(name = "officeId")
     val officeId: Int = 0,
 
-    @ColumnInfo(name = "officeName")
     val officeName: String? = null,
 
-    @ColumnInfo(name = "staffId")
     val staffId: Int = 0,
 
-    @ColumnInfo(name = "staffName")
     val staffName: String? = null,
 
-    @ColumnInfo(name = "timeline")
     val timeline: Timeline? = null,
 
-    @ColumnInfo(name = "fullname")
     val fullname: String? = null,
 
-    @ColumnInfo(name = "imageId")
     val imageId: Int = 0,
 
-    @ColumnInfo(name = "imagePresent")
     val imagePresent: Boolean = false,
 
-    @ColumnInfo(name = "externalId")
     val externalId: String? = null,
 ) : Parcelable {
 

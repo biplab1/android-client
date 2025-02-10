@@ -19,12 +19,9 @@ import kotlinx.parcelize.Parcelize
 @Entity
 data class ChargeTimeType(
     @PrimaryKey
-    @ColumnInfo(name = "id")
     val id: Int? = null,
 
-    @ColumnInfo(name = "code")
     val code: String? = null,
 
-    @ColumnInfo(name = "value")
     val value: String? = null,
 ) : Parcelable

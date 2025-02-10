@@ -20,14 +20,11 @@ import kotlinx.parcelize.Parcelize
 data class ChargeCalculationType(
     @JvmField
     @PrimaryKey
-    @ColumnInfo(name = "id")
     val id: Int? = null,
 
-    @ColumnInfo(name = "code")
     @JvmField
     val code: String? = null,
 
-    @ColumnInfo(name = "value")
     @JvmField
     val value: String? = null,
 ) : Parcelable

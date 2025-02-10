@@ -19,13 +19,10 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "Status")
 data class Status(
     @PrimaryKey
-    @ColumnInfo(name = "id")
     val id: Int = 0,
 
-    @ColumnInfo(name = "code")
     val code: String? = null,
 
-    @ColumnInfo(name = "value")
     val value: String? = null,
 ) : Parcelable {
 
