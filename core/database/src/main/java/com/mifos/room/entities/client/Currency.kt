@@ -19,24 +19,17 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "ClientChargeCurrency")
 data class Currency(
     @PrimaryKey
-    @ColumnInfo(name = "code")
     val code: String? = null,
 
-    @ColumnInfo(name = "name")
     val name: String? = null,
 
-    @ColumnInfo(name = "decimalPlaces")
     val decimalPlaces: Int? = null,
 
-    @ColumnInfo(name = "inMultiplesOf")
     val inMultiplesOf: Int? = null,
 
-    @ColumnInfo(name = "displaySymbol")
     val displaySymbol: String? = null,
 
-    @ColumnInfo(name = "nameCode")
     val nameCode: String? = null,
 
-    @ColumnInfo(name = "displayLabel")
     val displayLabel: String? = null,
 ) : Parcelable

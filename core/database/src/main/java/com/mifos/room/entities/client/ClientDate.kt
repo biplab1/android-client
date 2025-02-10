@@ -20,18 +20,13 @@ import kotlinx.parcelize.Parcelize
     primaryKeys = ["clientId", "chargeId"],
 )
 data class ClientDate(
-    @ColumnInfo(name = "clientId")
     val clientId: Long = 0,
 
-    @ColumnInfo(name = "chargeId")
     val chargeId: Long = 0,
 
-    @ColumnInfo(name = "day")
     val day: Int = 0,
 
-    @ColumnInfo(name = "month")
     val month: Int = 0,
 
-    @ColumnInfo(name = "year")
     val year: Int = 0,
 ) : Parcelable

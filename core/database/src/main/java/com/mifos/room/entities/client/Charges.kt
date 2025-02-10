@@ -56,61 +56,42 @@ import kotlinx.serialization.json.Json
 )
 data class Charges(
     @PrimaryKey
-    @ColumnInfo(name = "id")
     val id: Int? = null,
 
-    @ColumnInfo(name = "clientId")
     val clientId: Int? = null,
 
-    @ColumnInfo(name = "loanId")
     val loanId: Int? = null,
 
-    @ColumnInfo(name = "chargeId")
     val chargeId: Int? = null,
 
-    @ColumnInfo(name = "name")
     val name: String? = null,
 
-    @ColumnInfo(name = "chargeTimeType")
     val chargeTimeType: ChargeTimeType? = null,
 
-    @ColumnInfo(name = "chargeDueDateId")
     val chargeDueDate: ClientDate? = null,
 
-    @ColumnInfo(name = "dueDate")
     val dueDate: String? = null,
 
-    @ColumnInfo(name = "chargeCalculationType")
     val chargeCalculationType: ChargeCalculationType? = null,
 
-    @ColumnInfo(name = "currency")
     val currency: Currency? = null,
 
-    @ColumnInfo(name = "amount")
     val amount: Double? = null,
 
-    @ColumnInfo(name = "amountPaid")
     val amountPaid: Double? = null,
 
-    @ColumnInfo(name = "amountWaived")
     val amountWaived: Double? = null,
 
-    @ColumnInfo(name = "amountWrittenOff")
     val amountWrittenOff: Double? = null,
 
-    @ColumnInfo(name = "amountOutstanding")
     val amountOutstanding: Double? = null,
 
-    @ColumnInfo(name = "penalty")
     val penalty: Boolean? = null,
 
-    @ColumnInfo(name = "active")
     val active: Boolean? = null,
 
-    @ColumnInfo(name = "paid")
     val paid: Boolean? = null,
 
-    @ColumnInfo(name = "waived")
     val waived: Boolean? = null,
 ) : Parcelable {
 
