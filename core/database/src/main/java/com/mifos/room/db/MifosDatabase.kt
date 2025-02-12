@@ -12,9 +12,9 @@ package com.mifos.room.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.mifos.room.dao.ClientDao
 import com.mifos.room.dao.ColumnValueDao
 import com.mifos.room.dao.LoanDao
-import com.mifos.room.dao.ClientDao
 import com.mifos.room.entities.PaymentTypeOption
 import com.mifos.room.entities.accounts.loans.ActualDisbursementDate
 import com.mifos.room.entities.accounts.loans.LoanRepaymentRequest
@@ -22,9 +22,9 @@ import com.mifos.room.entities.accounts.loans.LoanWithAssociations
 import com.mifos.room.entities.accounts.loans.Status
 import com.mifos.room.entities.accounts.loans.Summary
 import com.mifos.room.entities.accounts.loans.Timeline
-import com.mifos.room.entities.client.ClientsAttendance
-import com.mifos.room.entities.client.ChargeTimeType
 import com.mifos.room.entities.client.ChargeCalculationType
+import com.mifos.room.entities.client.ChargeTimeType
+import com.mifos.room.entities.client.ClientsAttendance
 import com.mifos.room.entities.noncore.ColumnValue
 import com.mifos.room.entities.templates.loans.LoanRepaymentTemplate
 import com.mifos.room.utils.typeconverters.DueDateConverter
