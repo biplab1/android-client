@@ -13,7 +13,7 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.mifos.core.entity.group.Group
+import com.mifos.room.entities.group.Group
 import com.mifos.room.entities.Timeline
 import kotlinx.parcelize.Parcelize
 
@@ -49,7 +49,7 @@ data class Client(
     val status: Status? = null,
 
     @Transient
-    val sync: Boolean = false,
+    var sync: Boolean = false,
 
     val active: Boolean = false,
 

@@ -9,9 +9,7 @@
  */
 package com.mifos.room.entities.client
 
-import com.mifos.core.entity.accounts.savings.DepositType
-import com.mifos.core.entity.client.Currency
-import com.mifos.core.entity.client.Status
+import com.mifos.room.entities.accounts.savings.DepositType
 
 /**
  * Created by nellyk on 2/19/2016.

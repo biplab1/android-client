@@ -10,8 +10,8 @@
 package com.mifos.core.data.repository
 
 import androidx.paging.PagingData
+import com.mifos.core.model.objects.clients.Page
 import com.mifos.room.entities.client.Client
-import com.mifos.room.entities.client.Page
 import kotlinx.coroutines.flow.Flow
 
 /**
