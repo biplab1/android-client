@@ -10,8 +10,8 @@
 package com.mifos.core.data.repositoryImp
 
 import com.mifos.core.data.repository.ClientIdentifiersRepository
+import com.mifos.core.model.objects.noncoreobjects.Identifier
 import com.mifos.core.network.datamanager.DataManagerClient
-import com.mifos.room.entities.noncore.Identifier
 import org.openapitools.client.models.DeleteClientsClientIdIdentifiersIdentifierIdResponse
 import javax.inject.Inject
 

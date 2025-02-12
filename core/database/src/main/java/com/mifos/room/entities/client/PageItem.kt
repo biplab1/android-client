@@ -9,7 +9,6 @@
  */
 package com.mifos.room.entities.client
 
-import com.mifos.core.entity.client.Status
 import com.mifos.room.entities.Timeline
 
 /**
