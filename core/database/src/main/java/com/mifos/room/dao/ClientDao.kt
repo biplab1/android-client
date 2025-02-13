@@ -13,9 +13,14 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.mifos.core.model.objects.clients.Page
 import com.mifos.room.entities.accounts.ClientAccounts
+import com.mifos.room.entities.accounts.loans.LoanAccount
+import com.mifos.room.entities.accounts.savings.SavingsAccount
 import com.mifos.room.entities.client.Client
+import com.mifos.room.entities.client.ClientPayload
 import com.mifos.room.entities.group.GroupWithAssociations
 import kotlinx.coroutines.flow.Flow
 
@@ -40,6 +45,33 @@ interface ClientDao {
         clientId: Int,
     ): Flow<ClientAccounts>
 
-    @Query("SELECT * FROM ClientAccounts WHERE clientId = :clientId")
-    fun readClientAccounts(clientId: Int): Flow<ClientAccounts>
+    @Query("SELECT * FROM LoanAccount WHERE clientId = :clientId")
+    fun getLoanAccounts(clientId: Long): Flow<List<LoanAccount>>
+
+    @Query("SELECT * FROM SavingsAccount WHERE clientId = :clientId")
+    fun getSavingsAccounts(clientId: Long): Flow<List<SavingsAccount>>
+
+    // TODO add readClientAccounts, use combine
+
+    // TODO saveClientTemplate
+
+    // TODO readClientTemplate
+
+    // TODO saveClientPayloadToDB
+
+    // TODO readClientPayloadFromDB
+
+    // TODO deleteClientPayload
+
+    @Query("DELETE FROM ClientPayload WHERE id = :id")
+    fun deleteClientPayloadById(id: Int)
+
+    @Query("DELETE FROM DataTablePayload WHERE clientCreationTime = :clientCreationTime")
+    fun deleteDataTablePayloadByTime(clientCreationTime: Long)
+
+    @Transaction
+    fun deleteClientPayload(id: Int, clientCreationTime: Long): Flow<List<ClientPayload>>
+
+    @Update
+    suspend fun updateDatabaseClientPayload(clientPayload: ClientPayload): Flow<ClientPayload>
 }
