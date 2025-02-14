@@ -26,7 +26,7 @@ interface CreateNewClientRepository {
 
     fun clientTemplate(): Observable<ClientsTemplate>
 
-    suspend fun offices(): List<Office>
+    fun offices(): Flow<List<Office>>
 
     fun getStaffInOffice(officeId: Int): Flow<List<Staff>>
 

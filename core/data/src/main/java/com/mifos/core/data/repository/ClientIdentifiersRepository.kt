@@ -10,6 +10,7 @@
 package com.mifos.core.data.repository
 
 import com.mifos.core.model.objects.noncoreobjects.Identifier
+import kotlinx.coroutines.flow.Flow
 import org.openapitools.client.models.DeleteClientsClientIdIdentifiersIdentifierIdResponse
 
 /**
@@ -17,7 +18,7 @@ import org.openapitools.client.models.DeleteClientsClientIdIdentifiersIdentifier
  */
 interface ClientIdentifiersRepository {
 
-    suspend fun getClientIdentifiers(clientId: Int): List<Identifier>
+    fun getClientIdentifiers(clientId: Int): Flow<List<Identifier>>
 
     suspend fun deleteClientIdentifier(
         clientId: Int,

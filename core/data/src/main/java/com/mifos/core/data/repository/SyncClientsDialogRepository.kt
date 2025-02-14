@@ -16,7 +16,6 @@ import com.mifos.room.entities.accounts.ClientAccounts
 import com.mifos.room.entities.accounts.loans.LoanWithAssociations
 import com.mifos.room.entities.templates.loans.LoanRepaymentTemplate
 import kotlinx.coroutines.flow.Flow
-import rx.Observable
 
 /**
  * Created by Aditya Gupta on 16/08/23.
@@ -33,13 +32,13 @@ interface SyncClientsDialogRepository {
         type: String?,
         savingsAccountId: Int,
         association: String?,
-    ): Observable<SavingsAccountWithAssociations>
+    ): Flow<SavingsAccountWithAssociations>
 
     fun syncSavingsAccountTransactionTemplate(
         savingsAccountType: String?,
         savingsAccountId: Int,
         transactionType: String?,
-    ): Observable<SavingsAccountTransactionTemplate>
+    ): Flow<SavingsAccountTransactionTemplate>
 
-    fun syncClientInDatabase(client: Client): Observable<Client>
+    fun syncClientInDatabase(client: Client): Flow<Client>
 }
