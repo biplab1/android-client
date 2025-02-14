@@ -10,28 +10,28 @@
 package com.mifos.core.network.datamanager
 
 import com.mifos.core.databasehelper.DatabaseHelperClient
-import com.mifos.core.entity.client.Client
-import com.mifos.core.entity.client.ClientPayload
-import com.mifos.core.entity.templates.clients.ClientsTemplate
+import com.mifos.core.model.objects.clients.ActivatePayload
+import com.mifos.core.model.objects.clients.Page
+import com.mifos.core.model.objects.noncoreobjects.ClientAccounts
+import com.mifos.core.model.objects.noncoreobjects.Identifier
+import com.mifos.core.model.objects.noncoreobjects.IdentifierCreationResponse
+import com.mifos.core.model.objects.noncoreobjects.IdentifierPayload
+import com.mifos.core.model.objects.noncoreobjects.IdentifierTemplate
 import com.mifos.core.network.BaseApiManager
 import com.mifos.core.network.GenericResponse
 import com.mifos.core.network.mappers.clients.GetClientResponseMapper
 import com.mifos.core.network.mappers.clients.GetClientsClientIdAccountMapper
 import com.mifos.core.network.mappers.clients.GetIdentifiersTemplateMapper
 import com.mifos.core.network.mappers.clients.IdentifierMapper
-import com.mifos.core.objects.clients.ActivatePayload
-import com.mifos.core.objects.clients.Page
-import com.mifos.core.objects.noncoreobjects.Identifier
-import com.mifos.core.objects.noncoreobjects.IdentifierCreationResponse
-import com.mifos.core.objects.noncoreobjects.IdentifierPayload
-import com.mifos.core.objects.noncoreobjects.IdentifierTemplate
-import com.mifos.room.entities.accounts.ClientAccounts
+import com.mifos.room.entities.client.Client
+import com.mifos.room.entities.client.ClientPayload
+import com.mifos.room.entities.templates.clients.ClientsTemplate
+import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import org.openapitools.client.models.DeleteClientsClientIdIdentifiersIdentifierIdResponse
 import org.openapitools.client.models.PostClientsClientIdRequest
 import org.openapitools.client.models.PostClientsClientIdResponse
-import rx.Observable
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -97,7 +97,7 @@ class DataManagerClient @Inject constructor(
      *
      * @return Page of Client List
      */
-    val allDatabaseClients: Observable<Page<Client>>
+    val allDatabaseClients: Flow<Page<Client>>
         get() = mDatabaseHelperClient.readAllClients()
 
     /**
@@ -122,7 +122,7 @@ class DataManagerClient @Inject constructor(
 //        }
 //    }
 
-    fun syncClientInDatabase(client: Client): Observable<Client> {
+    fun syncClientInDatabase(client: Client): Flow<Client> {
         return mDatabaseHelperClient.saveClient(client)
     }
 
@@ -186,7 +186,7 @@ class DataManagerClient @Inject constructor(
      * @param clientId Client ID
      * @return ResponseBody is the Retrofit 2 response
      */
-    fun deleteClientImage(clientId: Int): Observable<ResponseBody> {
+    fun deleteClientImage(clientId: Int): Flow<ResponseBody> {
         return mBaseApiManager.clientsApi.deleteClientImage(clientId)
     }
 
@@ -199,7 +199,7 @@ class DataManagerClient @Inject constructor(
      * @param file MultipartBody of the Image file
      * @return ResponseBody is the Retrofit 2 response
      */
-    fun uploadClientImage(id: Int, file: MultipartBody.Part?): Observable<ResponseBody> {
+    fun uploadClientImage(id: Int, file: MultipartBody.Part?): Flow<ResponseBody> {
         return mBaseApiManager.clientsApi.uploadClientImage(id, file)
     }
     /**
@@ -241,10 +241,10 @@ class DataManagerClient @Inject constructor(
      * @param clientPayload Client details filled by user
      * @return Client
      */
-    fun createClient(clientPayload: ClientPayload): Observable<Client> {
+    fun createClient(clientPayload: ClientPayload): Flow<Client> {
         return when (prefManager.userStatus) {
             false -> mBaseApiManager.clientsApi.createClient(clientPayload)
-                .concatMap { client -> Observable.just(client) }
+                .concatMap { client -> Flow.just(client) }
 
             true ->
                 /**
@@ -260,7 +260,7 @@ class DataManagerClient @Inject constructor(
      *
      * @return List<ClientPayload></ClientPayload>>
      */
-    val allDatabaseClientPayload: Observable<List<ClientPayload>>
+    val allDatabaseClientPayload: Flow<List<ClientPayload>>
         get() = mDatabaseHelperClient.readAllClientPayload()
 
     /**
@@ -274,7 +274,7 @@ class DataManagerClient @Inject constructor(
     fun deleteAndUpdatePayloads(
         id: Int,
         clientCreationTIme: Long,
-    ): Observable<List<ClientPayload>> {
+    ): Flow<List<ClientPayload>> {
         return mDatabaseHelperClient.deleteAndUpdatePayloads(id, clientCreationTIme)
     }
 
@@ -284,7 +284,7 @@ class DataManagerClient @Inject constructor(
      * @param clientPayload ClientPayload
      * @return ClientPayload
      */
-    fun updateClientPayload(clientPayload: ClientPayload): Observable<ClientPayload> {
+    fun updateClientPayload(clientPayload: ClientPayload): Flow<ClientPayload> {
         return mDatabaseHelperClient.updateDatabaseClientPayload(clientPayload)
     }
 
