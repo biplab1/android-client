@@ -29,7 +29,7 @@ data class Savings(
 
     val accountBalance: Double? = null,
 
-    val additionalProperties: Map<String, Any> = HashMap(),
+    val additionalProperties: Map<String, Any> = emptyMap(),
 
     val depositType: DepositType? = null,
 )
