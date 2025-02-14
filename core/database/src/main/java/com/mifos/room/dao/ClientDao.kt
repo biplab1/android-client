@@ -33,7 +33,7 @@ interface ClientDao {
     @Query("SELECT * FROM Client")
     fun readAllClients(): Flow<Page<Client>>
 
-    @Query("SELECT * FROM GroupTable WHERE id = :groupId")
+    @Query("SELECT * FROM Client WHERE id = :groupId")
     fun getGroupAssociateClients(groupId: Int): Flow<GroupWithAssociations>
 
     @Query("SELECT * FROM Client WHERE id = :clientId LIMIT 1")
