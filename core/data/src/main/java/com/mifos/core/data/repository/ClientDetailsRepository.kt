@@ -11,7 +11,6 @@ package com.mifos.core.data.repository
 
 import com.mifos.room.entities.accounts.ClientAccounts
 import com.mifos.room.entities.client.Client
-import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 
@@ -20,9 +19,9 @@ import okhttp3.ResponseBody
  */
 interface ClientDetailsRepository {
 
-    fun uploadClientImage(id: Int, file: MultipartBody.Part?): Flow<ResponseBody>
+    suspend fun uploadClientImage(id: Int, file: MultipartBody.Part?): ResponseBody
 
-    fun deleteClientImage(clientId: Int): Flow<ResponseBody>
+    suspend fun deleteClientImage(clientId: Int): ResponseBody
 
     suspend fun getClientAccounts(clientId: Int): ClientAccounts
 

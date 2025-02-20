@@ -30,7 +30,7 @@ data class GroupWithAssociations(
 
     val active: Boolean? = null,
 
-    val activationDate: List<Int?> = ArrayList(),
+    val activationDate: List<Int?> = emptyList(),
 
     val officeId: Int? = null,
 
@@ -44,7 +44,7 @@ data class GroupWithAssociations(
 
     val groupLevel: Int? = null,
 
-    val clientMembers: List<Client> = ArrayList(),
+    val clientMembers: List<Client> = emptyList(),
 
     val timeline: Timeline? = null,
 ) : Parcelable

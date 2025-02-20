@@ -12,6 +12,7 @@ package com.mifos.room.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.mifos.room.dao.ClientDao
 import com.mifos.room.dao.ColumnValueDao
 import com.mifos.room.dao.LoanDao
 import com.mifos.room.dao.StaffDao
@@ -23,6 +24,13 @@ import com.mifos.room.entities.accounts.loans.LoanWithAssociations
 import com.mifos.room.entities.accounts.loans.Status
 import com.mifos.room.entities.accounts.loans.Summary
 import com.mifos.room.entities.accounts.loans.Timeline
+import com.mifos.room.entities.client.ChargeCalculationType
+import com.mifos.room.entities.client.ChargeTimeType
+import com.mifos.room.entities.client.Charges
+import com.mifos.room.entities.client.Client
+import com.mifos.room.entities.client.ClientDate
+import com.mifos.room.entities.client.ClientPayload
+import com.mifos.room.entities.client.Currency
 import com.mifos.room.entities.noncore.ColumnValue
 import com.mifos.room.entities.organisation.Staff
 import com.mifos.room.entities.survey.QuestionDatas
@@ -53,6 +61,15 @@ import com.mifos.room.utils.typeconverters.SurveyTypeConverters
         QuestionDatas::class,
         ResponseDatas::class,
         Staff::class,
+        // client
+        ChargeCalculationType::class,
+        Charges::class,
+        ChargeTimeType::class,
+        Client::class,
+        ClientDate::class,
+        ClientPayload::class,
+        Currency::class,
+        com.mifos.room.entities.client.Status::class,
     ],
     version = MifosDatabase.VERSION,
     exportSchema = true,
@@ -69,6 +86,7 @@ import com.mifos.room.utils.typeconverters.SurveyTypeConverters
 
 abstract class MifosDatabase : RoomDatabase() {
     abstract fun columnValueDao(): ColumnValueDao
+    abstract fun clientDao(): ClientDao
     abstract fun loanDao(): LoanDao
     abstract fun surveyDao(): SurveyDao
     abstract fun staffDao(): StaffDao
