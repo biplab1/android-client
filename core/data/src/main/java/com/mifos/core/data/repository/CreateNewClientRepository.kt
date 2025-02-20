@@ -11,25 +11,26 @@ package com.mifos.core.data.repository
 
 import com.mifos.core.entity.client.Client
 import com.mifos.core.entity.client.ClientPayload
-import com.mifos.core.entity.organisation.Office
 import com.mifos.core.entity.templates.clients.ClientsTemplate
+import com.mifos.room.entities.organisation.OfficeEntity
 import com.mifos.room.entities.organisation.Staff
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
+import rx.Observable
 
 /**
  * Created by Aditya Gupta on 10/08/23.
  */
 interface CreateNewClientRepository {
 
-    suspend fun clientTemplate(): ClientsTemplate
+    fun clientTemplate(): Observable<ClientsTemplate>
 
-    fun offices(): Flow<List<Office>>
+    fun offices(): Flow<List<OfficeEntity>>
 
     fun getStaffInOffice(officeId: Int): Flow<List<Staff>>
 
-    suspend fun createClient(clientPayload: ClientPayload): Client
+    fun createClient(clientPayload: ClientPayload): Observable<Client>
 
-    suspend fun uploadClientImage(id: Int, file: MultipartBody.Part?): ResponseBody
+    fun uploadClientImage(id: Int, file: MultipartBody.Part?): Observable<ResponseBody>
 }

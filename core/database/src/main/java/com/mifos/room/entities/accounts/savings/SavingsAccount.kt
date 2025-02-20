@@ -9,10 +9,12 @@
  */
 package com.mifos.room.entities.accounts.savings
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
 @Entity(
     tableName = "SavingsAccount",
@@ -37,32 +39,40 @@ import androidx.room.PrimaryKey
         ),
     ],
 )
+@Parcelize
 data class SavingsAccount(
     @PrimaryKey
-    val id: Int? = null,
+    var id: Int? = null,
 
+    @ColumnInfo(name = "clientId")
     @Transient
-    val clientId: Long = 0,
+    var clientId: Long = 0,
 
+    @ColumnInfo(name = "groupId")
     @Transient
-    val groupId: Long = 0,
+    var groupId: Long = 0,
 
-    val centerId: Long = 0,
+    @ColumnInfo(name = "centerId")
+    var centerId: Long = 0,
 
-    val accountNo: String? = null,
+    @ColumnInfo(name = "accountNo")
+    var accountNo: String? = null,
 
-    val productId: Int? = null,
+    @ColumnInfo(name = "productId")
+    var productId: Int? = null,
 
-    val productName: String? = null,
+    @ColumnInfo(name = "productName")
+    var productName: String? = null,
 
-    @ColumnInfo(index = true)
-    val status: Status? = null,
+    @ColumnInfo(name = "status", index = true)
+    var status: Status? = null,
 
-    @ColumnInfo(index = true)
-    val currency: Currency? = null,
+    @ColumnInfo(name = "currency", index = true)
+    var currency: Currency? = null,
 
-    val accountBalance: Double? = null,
+    @ColumnInfo(name = "accountBalance")
+    var accountBalance: Double? = null,
 
-    @ColumnInfo(index = true)
-    val depositType: DepositType? = null,
-)
+    @ColumnInfo(name = "depositType", index = true)
+    var depositType: DepositType? = null,
+) : Parcelable
