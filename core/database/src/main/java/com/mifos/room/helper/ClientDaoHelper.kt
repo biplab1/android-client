@@ -12,40 +12,22 @@ package com.mifos.room.helper
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.mifos.core.common.utils.Constants
 import com.mifos.core.common.utils.MapDeserializer
-import com.mifos.core.entity.noncore.ColumnHeader
-import com.mifos.core.entity.noncore.ColumnHeader_Table
-import com.mifos.core.entity.noncore.ColumnValue
-import com.mifos.core.entity.noncore.ColumnValue_Table
-import com.mifos.core.entity.noncore.DataTable
-import com.mifos.core.entity.noncore.DataTablePayload
-import com.mifos.core.entity.noncore.DataTablePayload_Table
-import com.mifos.core.entity.noncore.DataTable_Table
+import com.mifos.core.common.utils.Page
 import com.mifos.room.dao.ClientDao
 import com.mifos.room.entities.accounts.ClientAccounts
 import com.mifos.room.entities.accounts.loans.LoanAccount
-import com.mifos.room.entities.accounts.loans.LoanAccount_Table
 import com.mifos.room.entities.accounts.savings.SavingsAccount
-import com.mifos.room.entities.accounts.savings.SavingsAccount_Table
 import com.mifos.room.entities.client.Client
 import com.mifos.room.entities.client.ClientDate
 import com.mifos.room.entities.client.ClientPayload
-import com.mifos.room.entities.client.ClientPayload_Table
-import com.mifos.room.entities.client.Client_Table
-import com.mifos.room.entities.client.Page
 import com.mifos.room.entities.group.GroupWithAssociations
-import com.mifos.room.entities.templates.clients.ClientsTemplate
-import com.mifos.room.entities.templates.clients.InterestType
-import com.mifos.room.entities.templates.clients.OfficeOptions
-import com.mifos.room.entities.templates.clients.Options
-import com.mifos.room.entities.templates.clients.Options_Table
-import com.mifos.room.entities.templates.clients.SavingProductOptions
-import com.mifos.room.entities.templates.clients.StaffOptions
-import com.raizlabs.android.dbflow.sql.language.Delete
-import com.raizlabs.android.dbflow.sql.language.SQLite
-import rx.Observable
-import rx.functions.Func0
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.lang.reflect.Type
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -54,9 +36,6 @@ import javax.inject.Singleton
  * This DatabaseHelper Managing all Database logic and staff (Saving, Update, Delete).
  * Whenever DataManager send response to save or request to read from Database then this class
  * save the response or read the all values from database and return as accordingly.
- *
- *
- * Created by Rajan Maurya on 24/06/16.
  */
 @Singleton
 class ClientDaoHelper @Inject constructor(
@@ -81,55 +60,47 @@ class ClientDaoHelper @Inject constructor(
      * @param client Client
      * @return saved Client
      */
-    fun saveClient(client: Client): Observable<Client> {
-        return Observable.defer(
-            Func0 { // Saving Client in Database
-                val clientDate = client.activationDate[0]?.let {
-                    client.activationDate[1]?.let { it1 ->
-                        client.activationDate[2]?.let { it2 ->
-                            ClientDate(
-                                client.id.toLong(),
-                                0,
-                                it,
-                                it1,
-                                it2,
-                            )
-                        }
+    fun saveClient(client: Client): Flow<Client> =
+        flow {
+            val clientDate = client.activationDate.getOrNull(0)?.let { year ->
+                client.activationDate.getOrNull(1)?.let { month ->
+                    client.activationDate.getOrNull(2)?.let { day ->
+                        ClientDate(client.id.toLong(), 0, year, month, day)
                     }
                 }
-                client.clientDate = clientDate
-                client.save()
-                Observable.just(client)
-            },
-        )
-    }
+            }
+            val updatedClient = client.copy(clientDate = clientDate)
+            clientDao.insertClient(updatedClient)
+            emit(updatedClient)
+        }
 
     /**
      * Reading All Clients from table of Client and return the ClientList
      *
      * @return List Of Client
      */
-    // TODO Implement Observable Transaction to load Client List
-    fun readAllClients(): Observable<Page<Client>> {
-        return Observable.create<Page<Client>> { subscriber ->
-            val clientPage = Page<Client>()
-            clientPage.pageItems = SQLite.select()
-                .from(Client::class.java)
-                .queryList()
-            subscriber.onNext(clientPage)
-            subscriber.onCompleted()
+
+    fun readAllClients(): Flow<Page<Client>> {
+        return clientDao.getAllClients().map { clients ->
+            Page<Client>().apply {
+                pageItems = clients
+            }
         }
     }
 
-    fun getGroupAssociateClients(groupId: Int): Observable<GroupWithAssociations> {
-        return Observable.defer {
-            val clients = SQLite.select()
-                .from(Client::class.java)
-                .where(Client_Table.groupId.eq(groupId))
-                .queryList()
-            val groupWithAssociations = GroupWithAssociations()
-            groupWithAssociations.clientMembers = clients
-            Observable.just(groupWithAssociations)
+    /**
+     * Retrieves all clients associated with a specific group and returns a `GroupWithAssociations` object.
+     *
+     * @param groupId The ID of the group for which the associated clients should be retrieved.
+     * @return A `Flow` of `GroupWithAssociations`, which contains a list of `clientMembers` associated with the
+     *         specified group.
+     */
+
+    fun getGroupAssociateClients(groupId: Int): Flow<GroupWithAssociations> {
+        return clientDao.getClientsByGroupId(groupId).map { clients ->
+            GroupWithAssociations().copy(
+                clientMembers = clients,
+            )
         }
     }
 
@@ -137,22 +108,17 @@ class ClientDaoHelper @Inject constructor(
      * This Method select query with clientId, In return the Client Details will be come.
      *
      * @param clientId of the client
-     * @return Client
+     * @return A 'Flow' of 'Client'
      */
-    fun getClient(clientId: Int): Observable<Client> {
-        return Observable.create { subscriber ->
-            val client = SQLite.select()
-                .from(Client::class.java)
-                .where(Client_Table.id.eq(clientId))
-                .querySingle()
-            if (client != null) {
-                client.activationDate = listOf(
+    fun getClient(clientId: Int): Flow<Client> {
+        return clientDao.getClientByClientId(clientId).map { client ->
+            client.copy(
+                activationDate = listOf(
                     client.clientDate?.day,
                     client.clientDate?.month,
                     client.clientDate?.year,
-                )
-            }
-            subscriber.onNext(client)
+                ),
+            )
         }
     }
 
@@ -163,22 +129,21 @@ class ClientDaoHelper @Inject constructor(
      * @param clientId       Client Id
      * @return null
      */
-    fun saveClientAccounts(
+    suspend fun saveClientAccounts(
         clientAccounts: ClientAccounts,
         clientId: Int,
-    ): Observable<ClientAccounts> {
-        return Observable.defer {
-            val loanAccounts = clientAccounts.loanAccounts
-            val savingsAccounts = clientAccounts.savingsAccounts
-            for (loanAccount: LoanAccount in loanAccounts) {
-                loanAccount.clientId = clientId.toLong()
-                loanAccount.save()
-            }
-            for (savingsAccount: SavingsAccount in savingsAccounts) {
-                savingsAccount.clientId = clientId.toLong()
-                savingsAccount.save()
-            }
-            Observable.just(clientAccounts)
+    ) {
+        val loanAccounts = clientAccounts.loanAccounts
+        val savingsAccounts = clientAccounts.savingsAccounts
+
+        for (loanAccount: LoanAccount in loanAccounts) {
+            val updatedLoanAccount = loanAccount.copy(clientId = clientId.toLong())
+            clientDao.insertLoanAccount(updatedLoanAccount)
+        }
+
+        for (savingsAccount: SavingsAccount in savingsAccounts) {
+            val updatedSavingsAccount = savingsAccount.copy(clientId = clientId.toLong())
+            clientDao.insertSavingsAccount(updatedSavingsAccount)
         }
     }
 
@@ -187,22 +152,18 @@ class ClientDaoHelper @Inject constructor(
      * LoanAccount and SavingAccount according to clientId
      *
      * @param clientId Client Id
-     * @return Return the ClientAccount according to client Id
+     * @return Return the ClientAccounts according to client Id
      */
-    fun realClientAccounts(clientId: Int): Observable<ClientAccounts> {
-        return Observable.create { subscriber ->
-            val loanAccounts = SQLite.select()
-                .from(LoanAccount::class.java)
-                .where(LoanAccount_Table.clientId.eq(clientId.toLong()))
-                .queryList()
-            val savingsAccounts = SQLite.select()
-                .from(SavingsAccount::class.java)
-                .where(SavingsAccount_Table.clientId.eq(clientId.toLong()))
-                .queryList()
+    // TODO resolve if first() can be used or not
+    fun readClientAccounts(clientId: Int): Flow<ClientAccounts> {
+        return flow {
+            val loanAccounts = clientDao.getLoanAccountsByClientId(clientId.toLong()).first()
+            val savingsAccounts = clientDao.getSavingsAccountsByClientId(clientId.toLong()).first()
+
             val clientAccounts = ClientAccounts()
             clientAccounts.loanAccounts = loanAccounts
             clientAccounts.savingsAccounts = savingsAccounts
-            subscriber.onNext(clientAccounts)
+            emit(clientAccounts)
         }
     }
 
@@ -212,132 +173,27 @@ class ClientDaoHelper @Inject constructor(
      * @param clientsTemplate fetched from Server
      * @return void
      */
-    fun saveClientTemplate(clientsTemplate: ClientsTemplate): Observable<ClientsTemplate> {
-        return Observable.defer { // saving clientTemplate into DB;
-            clientsTemplate.save()
-            for (officeOptions: OfficeOptions in clientsTemplate.officeOptions) {
-                officeOptions.save()
-            }
-            for (staffOptions: StaffOptions in clientsTemplate.staffOptions) {
-                staffOptions.save()
-            }
-            for (savingProductOptions: SavingProductOptions in clientsTemplate
-                .savingProductOptions) {
-                savingProductOptions.save()
-            }
-            for (options: Options in clientsTemplate.genderOptions) {
-                options.optionType = GENDER_OPTIONS
-                options.save()
-            }
-            for (options: Options in clientsTemplate.clientTypeOptions) {
-                options.optionType = CLIENT_TYPE_OPTIONS
-                options.save()
-            }
-            for (options: Options in clientsTemplate.clientClassificationOptions) {
-                options.optionType = CLIENT_CLASSIFICATION_OPTIONS
-                options.save()
-            }
-            for (interestType: InterestType in clientsTemplate.clientLegalFormOptions) {
-                interestType.save()
-            }
-            for (dataTable: DataTable in clientsTemplate.dataTables) {
-                Delete.table(DataTable::class.java)
-                Delete.table(
-                    ColumnHeader::class.java,
-                )
-                Delete.table(ColumnValue::class.java)
-                dataTable.save()
-                for (columnHeader: ColumnHeader in dataTable.columnHeaderData) {
-                    columnHeader.registeredTableName = dataTable.registeredTableName
-                    columnHeader.save()
-                    for (columnValue: ColumnValue in columnHeader.columnValues) {
-                        columnValue.registeredTableName = dataTable.registeredTableName
-                        columnValue.save()
-                    }
-                }
-            }
-            Observable.just(clientsTemplate)
+    /*
+    fun saveClientTemplate(clientsTemplate: ClientsTemplate): Flow<ClientsTemplate> {
+        return flow {
+            clientDao.insertClientsTemplate(clientsTemplate)
+
+            clientDao.insertOfficeOptions(clientsTemplate.officeOptions)
+            clientDao.insertStaffOptions(clientsTemplate.staffOptions)
+            clientDao.insertSavingProductOptions(clientsTemplate.savingProductOptions)
+
+            clientDao.genderOptions.forEach{ it.optionType}
         }
+
     }
+     */
 
     /**
      * Reading ClientTemplate from Database ClientTemplate_Table
      *
      * @return ClientTemplate
      */
-    fun readClientTemplate(): Observable<ClientsTemplate> {
-        return Observable.defer {
-            val clientsTemplate = SQLite.select()
-                .from(ClientsTemplate::class.java)
-                .querySingle()
-            val officeOptionses = SQLite.select()
-                .from(OfficeOptions::class.java)
-                .queryList()
-            val staffOptionses = SQLite.select()
-                .from(StaffOptions::class.java)
-                .queryList()
-            val savingProductOptionses = SQLite.select()
-                .from(SavingProductOptions::class.java)
-                .queryList()
-            val genderOptions = SQLite.select()
-                .from(Options::class.java)
-                .where(Options_Table.optionType.eq(GENDER_OPTIONS))
-                .queryList()
-            val clientTypeOptions = SQLite.select()
-                .from(Options::class.java)
-                .where(Options_Table.optionType.eq(CLIENT_TYPE_OPTIONS))
-                .queryList()
-            val clientClassificationOptions = SQLite.select()
-                .from(Options::class.java)
-                .where(Options_Table.optionType.eq(CLIENT_CLASSIFICATION_OPTIONS))
-                .queryList()
-            val clientLegalFormOptions = SQLite.select()
-                .from(InterestType::class.java)
-                .queryList()
-            val dataTables = SQLite.select()
-                .from(DataTable::class.java)
-                .where(DataTable_Table.applicationTableName.eq(Constants.DATA_TABLE_NAME_CLIENT))
-                .queryList()
-            if (dataTables.isNotEmpty()) {
-                for (dataTable: DataTable in dataTables) {
-                    val columnHeaders = SQLite.select()
-                        .from(ColumnHeader::class.java)
-                        .where(
-                            ColumnHeader_Table.registeredTableName
-                                .eq(dataTable.registeredTableName),
-                        )
-                        .queryList()
-                    for (columnHeader: ColumnHeader in columnHeaders) {
-                        val columnValues = SQLite.select()
-                            .from(ColumnValue::class.java)
-                            .where(
-                                ColumnValue_Table.registeredTableName.eq(
-                                    dataTable
-                                        .registeredTableName,
-                                ),
-                            )
-                            .queryList()
-                        if (columnValues.isNotEmpty()) {
-                            columnHeader.columnValues = columnValues
-                        }
-                    }
-                    if (columnHeaders.isNotEmpty()) {
-                        dataTable.columnHeaderData = columnHeaders
-                    }
-                }
-            }
-            assert(clientsTemplate != null)
-            clientsTemplate!!.officeOptions = officeOptionses
-            clientsTemplate.staffOptions = staffOptionses
-            clientsTemplate.savingProductOptions = savingProductOptionses
-            clientsTemplate.genderOptions = genderOptions
-            clientsTemplate.clientTypeOptions = clientTypeOptions
-            clientsTemplate.clientClassificationOptions = clientClassificationOptions
-            clientsTemplate.clientLegalFormOptions = clientLegalFormOptions
-            clientsTemplate.dataTables = dataTables
-            Observable.just(clientsTemplate)
-        }
-    }
+    // TODO readClientTemplate
 
     /**
      * Saving ClientPayload into Database ClientPayload_Table
@@ -345,94 +201,78 @@ class ClientDaoHelper @Inject constructor(
      * @param clientPayload created in offline mode
      * @return Client
      */
-    fun saveClientPayloadToDB(clientPayload: ClientPayload): Observable<Client> {
-        return Observable.defer {
-            val currentTime = System.currentTimeMillis()
-            clientPayload.clientCreationTime = currentTime
-            if (clientPayload.datatables?.isNotEmpty() == true) {
-                Observable.from<DataTablePayload>(clientPayload.datatables)
-                    .subscribe { dataTablePayload ->
-                        dataTablePayload.clientCreationTime = currentTime
-                        val jsonObject = gson.toJsonTree(
-                            dataTablePayload
-                                .data,
-                        ).asJsonObject
-                        dataTablePayload.dataTableString = jsonObject.toString()
-                        dataTablePayload.save()
-                    }
-            }
-            clientPayload.save()
-            Observable.just(Client())
-        }
-    }
+    /*
+    suspend fun saveClientPayloadToDB(clientPayload: ClientPayload): Client {
+        val currentTime = System.currentTimeMillis()
+        val updatedClientPayload = clientPayload.copy(clientCreationTime = currentTime)
 
+        val updatedDataTablePayloads = updatedClientPayload.datatables?.map { dataTablePayload ->
+            dataTablePayload.copy(
+                clientCreationTime = currentTime,
+                dataTableString = json.encodeToString(dataTablePayload.data)
+            )
+        } ?: emptyList()
+
+        val clientId = clientDao.insertClientPayload(updatedClientPayload)
+        clientDao.insertDataTablePayloads(updatedDataTablePayloads)
+
+        val savedClient = clientDao.getClientByClientId(clientId)
+        emit(savedClient)
+    }
+*/
     /**
      * Reading All Entries in the ClientPayload_Table
      *
      * @return List<ClientPayload></ClientPayload>>
      */
-    fun readAllClientPayload(): Observable<List<ClientPayload>> {
-        return Observable.defer {
-            val clientPayloads = SQLite.select()
-                .from(ClientPayload::class.java)
-                .queryList()
-            if (clientPayloads.isNotEmpty()) {
-                Observable.from(clientPayloads).subscribe { clientPayload ->
-                    val dataTablePayloads = SQLite.select()
-                        .from(DataTablePayload::class.java)
-                        .where(
-                            DataTablePayload_Table.clientCreationTime
-                                .eq(clientPayload.clientCreationTime),
-                        )
-                        .queryList()
-                    if (dataTablePayloads.isNotEmpty()) {
-                        Observable.from(dataTablePayloads)
-                            .subscribe { dataTablePayload ->
-                                val data = gson.fromJson<HashMap<String, Any>>(
-                                    dataTablePayload.dataTableString,
-                                    type,
-                                )
-                                dataTablePayload.data = data
-                            }
-                        clientPayload.datatables = dataTablePayloads
+    fun readAllClientPayload(): Flow<List<ClientPayload>> {
+        return flow {
+            clientDao.getAllClientPayload().map { clientPayloads ->
+                clientPayloads.map { clientPayload ->
+                    val dataTablePayloads =
+                        clientPayload.clientCreationTime?.let {
+                            clientDao.getDataTablePayloadByCreationTime(
+                                it,
+                            )
+                        }
+                    val updatedDataTables = dataTablePayloads?.map { dataTablePayload ->
+                        val data: HashMap<String, Any>? =
+                            dataTablePayload.dataTableString?.let { Json.decodeFromString(it) }
+                        dataTablePayload.copy(data = data)
                     }
+                    clientPayload.copy(datatables = updatedDataTables.toString())
                 }
             }
-            Observable.just(clientPayloads)
         }
     }
 
     /**
      * This Method for deleting the client payload from the Database according to Id and
-     * again fetch the client List from the Database ClientPayload_Table
+     * again fetch the client List from the DataTablePayload
      *
      * @param id is Id of the Client Payload in which reference client was saved into Database
-     * @return List<ClientPayload></ClientPayload>>
+     * @return List<ClientPayload> A flow emitting the updated client payload.
      */
-    fun deleteAndUpdatePayloads(
+
+    suspend fun deleteAndUpdatePayloads(
         id: Int,
         clientCreationTIme: Long,
-    ): Observable<List<ClientPayload>> {
-        return Observable.defer {
-            Delete.table(ClientPayload::class.java, ClientPayload_Table.id.eq(id))
-            Delete.table(
-                DataTablePayload::class.java,
-                DataTablePayload_Table.clientCreationTime.eq(clientCreationTIme),
-            )
-            readAllClientPayload()
-        }
+    ): Flow<List<ClientPayload>> {
+        clientDao.deleteClientPayloadById(id)
+        clientDao.deleteDataTablePayloadByCreationTime(clientCreationTIme)
+        return readAllClientPayload()
     }
 
-    fun updateDatabaseClientPayload(clientPayload: ClientPayload): Observable<ClientPayload> {
-        return Observable.defer {
-            clientPayload.update()
-            Observable.just(clientPayload)
+    /**
+     * This method updates the database with the given ClientPayload and returns the updated payload.
+     *
+     * @param clientPayload The client payload data to be updated in the database.
+     * @return List<ClientPayload> A flow emitting the updated client payload.
+     */
+    fun updateDatabaseClientPayload(clientPayload: ClientPayload): Flow<ClientPayload> {
+        return flow {
+            clientDao.updateDatabaseClientPayload(clientPayload)
+            emit(clientPayload)
         }
-    }
-
-    companion object {
-        const val GENDER_OPTIONS = "genderOptions"
-        const val CLIENT_TYPE_OPTIONS = "clientTypeOptions"
-        const val CLIENT_CLASSIFICATION_OPTIONS = "clientClassificationOptions"
     }
 }
