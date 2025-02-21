@@ -10,6 +10,7 @@
 package com.mifos.room.di
 
 import com.mifos.room.dao.ChargeDao
+import com.mifos.room.dao.ClientDao
 import com.mifos.room.dao.ColumnValueDao
 import com.mifos.room.dao.GroupsDao
 import com.mifos.room.dao.LoanDao
@@ -64,7 +65,13 @@ object DaoModule {
 
     @Provides
     @Singleton
-    fun providesClientDao(database: MifosDatabase): ChargeDao {
+    fun providesChargeDao(database: MifosDatabase): ChargeDao {
         return database.chargeDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesClientDao(database: MifosDatabase): ClientDao {
+        return database.clientDao()
     }
 }
