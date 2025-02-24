@@ -9,10 +9,6 @@
  */
 package com.mifos.room.helper
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
-import com.mifos.core.common.utils.MapDeserializer
 import com.mifos.core.common.utils.Page
 import com.mifos.room.dao.ClientDao
 import com.mifos.room.entities.accounts.ClientAccounts
@@ -26,9 +22,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import java.lang.reflect.Type
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,18 +34,6 @@ import javax.inject.Singleton
 class ClientDaoHelper @Inject constructor(
     private val clientDao: ClientDao,
 ) {
-    private val gson: Gson
-    private val type: Type
-
-    init {
-        val gsonBuilder = GsonBuilder()
-        gsonBuilder.registerTypeAdapter(
-            object : TypeToken<HashMap<String, Any>>() {}.type,
-            MapDeserializer(),
-        )
-        gson = gsonBuilder.create()
-        type = object : TypeToken<HashMap<String, Any>>() {}.type
-    }
 
     /**
      * This Method save the single Client in Database with ClientId as Primary Id
@@ -173,20 +154,7 @@ class ClientDaoHelper @Inject constructor(
      * @param clientsTemplate fetched from Server
      * @return void
      */
-    /*
-    fun saveClientTemplate(clientsTemplate: ClientsTemplate): Flow<ClientsTemplate> {
-        return flow {
-            clientDao.insertClientsTemplate(clientsTemplate)
-
-            clientDao.insertOfficeOptions(clientsTemplate.officeOptions)
-            clientDao.insertStaffOptions(clientsTemplate.staffOptions)
-            clientDao.insertSavingProductOptions(clientsTemplate.savingProductOptions)
-
-            clientDao.genderOptions.forEach{ it.optionType}
-        }
-
-    }
-     */
+    // TODO saveClientTemplate
 
     /**
      * Reading ClientTemplate from Database ClientTemplate_Table
@@ -201,25 +169,8 @@ class ClientDaoHelper @Inject constructor(
      * @param clientPayload created in offline mode
      * @return Client
      */
-    /*
-    suspend fun saveClientPayloadToDB(clientPayload: ClientPayload): Client {
-        val currentTime = System.currentTimeMillis()
-        val updatedClientPayload = clientPayload.copy(clientCreationTime = currentTime)
+    // TODO clientPayload
 
-        val updatedDataTablePayloads = updatedClientPayload.datatables?.map { dataTablePayload ->
-            dataTablePayload.copy(
-                clientCreationTime = currentTime,
-                dataTableString = json.encodeToString(dataTablePayload.data)
-            )
-        } ?: emptyList()
-
-        val clientId = clientDao.insertClientPayload(updatedClientPayload)
-        clientDao.insertDataTablePayloads(updatedDataTablePayloads)
-
-        val savedClient = clientDao.getClientByClientId(clientId)
-        emit(savedClient)
-    }
-*/
     /**
      * Reading All Entries in the ClientPayload_Table
      *
@@ -237,11 +188,12 @@ class ClientDaoHelper @Inject constructor(
                         }
                     val updatedDataTables = dataTablePayloads?.map { dataTablePayload ->
                         val data: HashMap<String, Any>? =
-                            dataTablePayload.dataTableString?.let { Json.decodeFromString(it) }
+                            dataTablePayload.dataTableString?.let { json.decodeFromString(it) }
                         dataTablePayload.copy(data = data)
                     }
                     clientPayload.copy(datatables = updatedDataTables.toString())
                 }
+                emit(clientPayloads)
             }
         }
     }

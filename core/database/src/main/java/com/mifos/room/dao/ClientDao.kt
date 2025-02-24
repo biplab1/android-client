@@ -31,6 +31,7 @@ import com.mifos.room.entities.templates.clients.SavingProductOptions
 import com.mifos.room.entities.templates.clients.StaffOptions
 import kotlinx.coroutines.flow.Flow
 
+// TODO remove comments
 @Dao
 interface ClientDao {
     // fun saveClient
