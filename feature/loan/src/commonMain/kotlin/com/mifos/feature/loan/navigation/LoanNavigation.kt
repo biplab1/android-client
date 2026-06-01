@@ -33,6 +33,7 @@ import com.mifos.feature.loan.loanReschedules.loanReschedulesScreen
 import com.mifos.feature.loan.loanReschedules.navigateToLoanReschedulesScreen
 import com.mifos.feature.loan.loanTransaction.loanTransactionScreen
 import com.mifos.feature.loan.loanTransaction.navigateToLoanTransactionScreen
+import com.mifos.feature.loan.loanUndoApproval.loanUndoApprovalDestination
 import com.mifos.feature.loan.newLoanAccount.newLoanAccountDestination
 import com.mifos.room.entities.accounts.loans.LoanWithAssociationsEntity
 
@@ -41,6 +42,7 @@ fun NavGraphBuilder.loanDestination(
     onDocumentsClicked: (Int, String) -> Unit,
     onNotesClicked: (Int, String?) -> Unit,
     onMoreInfoClicked: (String, Int) -> Unit,
+    onLoanCreated: (clientId: Int) -> Unit,
 ) {
     loanAccountSummary(
         onBackPressed = navController::popBackStack,
@@ -76,6 +78,7 @@ fun NavGraphBuilder.loanDestination(
     newLoanAccountDestination(
         onNavigateBack = navController::popBackStack,
         onFinish = navController::popBackStack,
+        onLoanCreated = onLoanCreated,
         navController = navController,
     )
 
@@ -110,6 +113,9 @@ fun NavGraphBuilder.loanDestination(
     loanRescheduleFormScreen(
         navController = navController,
         onBackPressed = navController::popBackStack,
+    )
+    loanUndoApprovalDestination(
+        navController = navController,
     )
 }
 
